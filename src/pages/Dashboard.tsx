@@ -48,7 +48,29 @@ const Dashboard = () => {
     () => [...departmentSummaries].sort((a, b) => b.headcount - a.headcount).slice(0, 5),
     [departmentSummaries]
   );
+  const formatTimestamp = (timestamp: string) =>
+    new Date(timestamp).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
   const latestActivity = activityLog.slice(0, 6);
+  const renderedActivity = latestActivity.map((log) => {
+    const accentClass =
+      categoryAccent[log.category as keyof typeof categoryAccent] ?? "text-slate-200";
+    return (
+      <li key={log.id} className={`rounded-2xl border px-4 py-4 ${severityStyles[log.severity]}`}>
+        <div className="flex items-center justify-between">
+          <p className="font-medium text-white">{log.title}</p>
+          <span className={`text-xs uppercase tracking-[0.3em] ${accentClass}`}>{log.category}</span>
+        </div>
+        <p className="mt-1 text-slate-200">{log.detail}</p>
+        <p className="mt-2 text-xs text-slate-400">{formatTimestamp(log.timestamp)}</p>
+      </li>
+    );
+  });
 
   const statusDistribution = useMemo(() => {
     const counts = employees.reduce(
@@ -126,14 +148,6 @@ const Dashboard = () => {
     ? Math.round(totalPresence / weeklyPresence.length)
     : 0;
   const latestPresence = weeklyPresence.at(-1)?.value ?? 0;
-
-  const formatTimestamp = (timestamp: string) =>
-    new Date(timestamp).toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
 
   return (
     <section className="space-y-10">
@@ -387,26 +401,8 @@ const Dashboard = () => {
             </div>
           </div>
           <ul className="space-y-4 text-sm">
-            {latestActivity.length ? (
-              latestActivity.map((log) => {
-                const accentClass =
-                  categoryAccent[log.category as keyof typeof categoryAccent] ?? "text-slate-200";
-                return (
-                  <li
-                    key={log.id}
-                    className={`rounded-2xl border px-4 py-4 ${severityStyles[log.severity]}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium text-white">{log.title}</p>
-                      <span className={`text-xs uppercase tracking-[0.3em] ${accentClass}`}>
-                        {log.category}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-slate-200">{log.detail}</p>
-                    <p className="mt-2 text-xs text-slate-400">{formatTimestamp(log.timestamp)}</p>
-                  </li>
-                );
-              })
+            {renderedActivity.length ? (
+              renderedActivity
             ) : (
               <li className="rounded-2xl border border-white/5 bg-white/5 px-4 py-4 text-sm text-slate-400">
                 No activity logged yet.
