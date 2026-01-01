@@ -402,9 +402,10 @@ const Dashboard = () => {
                         {log.category}
                       </span>
                     </div>
-                  <p className="mt-1 text-slate-200">{log.detail}</p>
-                  <p className="mt-2 text-xs text-slate-400">{formatTimestamp(log.timestamp)}</p>
-                </li>
+                    <p className="mt-1 text-slate-200">{log.detail}</p>
+                    <p className="mt-2 text-xs text-slate-400">{formatTimestamp(log.timestamp)}</p>
+                  </li>
+                );
               })
             ) : (
               <li className="rounded-2xl border border-white/5 bg-white/5 px-4 py-4 text-sm text-slate-400">
